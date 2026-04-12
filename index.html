@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Study Point</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --blue: #326295;
+      --blue-dark: #1a3a5a;
+      --gold: #f3ae4e;
+      --cream: #f7f5ef;
+      --card: #ffffff;
+      --text: #183046;
+      --muted: #6c7b88;
+      --shadow: 0 18px 45px rgba(21, 48, 76, 0.12);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(243, 174, 78, 0.22), transparent 28%),
+        radial-gradient(circle at right 20%, rgba(50, 98, 149, 0.18), transparent 24%),
+        linear-gradient(180deg, #f8fbff 0%, #eef3f8 100%);
+    }
+
+    .shell {
+      width: min(1150px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 24px 0 40px;
+    }
+
+    .brand {
+      text-align: center;
+      font-family: 'Outfit', sans-serif;
+      font-size: clamp(2rem, 4vw, 3.4rem);
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      background: linear-gradient(135deg, var(--gold), #df7f28);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin: 4px 0 8px;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: var(--muted);
+      margin: 0 0 26px;
+      font-size: 0.98rem;
+    }
+
+    .panel {
+      background: rgba(255, 255, 255, 0.88);
+      border: 1px solid rgba(50, 98, 149, 0.12);
+      box-shadow: var(--shadow);
+      border-radius: 28px;
+      backdrop-filter: blur(10px);
+      overflow: hidden;
+    }
+
+    .hero {
+      padding: 24px;
+      background: linear-gradient(135deg, var(--blue) 0%, var(--blue-dark) 100%);
+      color: white;
+    }
+
+    .hero h1, .hero h2, .hero p { margin: 0; }
+
+    .hero p {
+      margin-top: 8px;
+      opacity: 0.92;
+      line-height: 1.5;
+    }
+
+    .content {
+      padding: 22px;
+    }
+
+    #login-screen, #tests-screen { display: none; }
+    #login-screen.active, #tests-screen.active { display: block; }
+
+    .login-box {
+      max-width: 460px;
+      margin: 0 auto;
+    }
+
+    .field-label {
+      display: block;
+      font-size: 0.92rem;
+      color: var(--muted);
+      margin: 16px 0 8px;
+      font-weight: 700;
+    }
+
+    .field {
+      width: 100%;
+      border: 1.5px solid #d5deea;
+      border-radius: 16px;
+      padding: 14px 16px;
+      font-size: 1rem;
+      outline: none;
+      background: #fff;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .field:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 4px rgba(50, 98, 149, 0.13);
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 22px;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 16px;
+      padding: 14px 18px;
+      font-size: 0.98rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease;
+    }
+
+    .btn:hover { transform: translateY(-1px); }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--gold), #e58626);
+      color: #fff;
+      box-shadow: 0 12px 24px rgba(229, 134, 38, 0.22);
+      flex: 1;
+    }
+
+    .btn-secondary {
+      background: #eef3f8;
+      color: var(--blue);
+      border: 1px solid #d5deea;
+    }
+
+    .master-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+
+    .welcome-block h2 {
+      margin: 0;
+      font-size: clamp(1.4rem, 3vw, 2rem);
+      color: var(--blue-dark);
+    }
+
+    .welcome-block p {
+      margin: 6px 0 0;
+      color: var(--muted);
+    }
+
+    .master-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .tips-box {
+      background: linear-gradient(135deg, #fff8ea, #fffdf9);
+      border: 1px solid rgba(243, 174, 78, 0.45);
+      border-radius: 20px;
+      padding: 16px 18px;
+      margin-bottom: 18px;
+      color: #7a5b20;
+    }
+
+    .tips-box strong { color: #704f18; }
+
+    .tests-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 18px;
+    }
+
+    .test-card {
+      position: relative;
+      background: var(--card);
+      border: 1px solid rgba(50, 98, 149, 0.14);
+      border-radius: 24px;
+      padding: 18px;
+      box-shadow: 0 10px 26px rgba(23, 49, 79, 0.08);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .test-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      width: fit-content;
+      padding: 7px 11px;
+      border-radius: 999px;
+      background: rgba(50, 98, 149, 0.09);
+      color: var(--blue);
+      font-size: 0.78rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .test-card h3 {
+      margin: 0;
+      color: var(--blue-dark);
+      font-size: 1.25rem;
+    }
+
+    .test-card p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.5;
+      min-height: 44px;
+    }
+
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .meta-chip {
+      background: #f4f7fb;
+      border-radius: 16px;
+      padding: 11px 12px;
+      border: 1px solid #e1e9f1;
+    }
+
+    .meta-chip span {
+      display: block;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+      margin-bottom: 4px;
+      font-weight: 700;
+    }
+
+    .meta-chip strong {
+      color: var(--blue-dark);
+      font-size: 1rem;
+    }
+
+    .empty-state {
+      padding: 26px;
+      text-align: center;
+      border-radius: 24px;
+      border: 1.5px dashed #c9d6e3;
+      color: var(--muted);
+      background: rgba(255, 255, 255, 0.64);
+    }
+
+    .helper-note {
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 0.92rem;
+      text-align: center;
+    }
+
+    @media (max-width: 640px) {
+      .shell { width: min(100% - 18px, 100%); padding-top: 16px; }
+      .hero, .content { padding: 18px; }
+      .meta-grid { grid-template-columns: 1fr; }
+      .btn-row .btn, .master-actions .btn { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <div class="brand">STUDY POINT</div>
+    <p class="subtitle">Login once, then choose any available test. This dashboard now reads from <code>tests-index.json</code> for fast large-scale test loading.</p>
+
+    <section id="login-screen" class="panel active">
+      <div class="hero">
+        <h1>Candidate Login</h1>
+        <p>Login once, then choose any available test from your dashboard.</p>
+      </div>
+      <div class="content">
+        <div class="login-box">
+          <label class="field-label" for="user-name-input">Student Name</label>
+          <input class="field" id="user-name-input" type="text" placeholder="Enter your name">
+
+          <label class="field-label" for="roll-number-input">Roll Number</label>
+          <input class="field" id="roll-number-input" type="text" placeholder="Enter your roll number">
+
+          <div class="btn-row">
+            <button class="btn btn-primary" id="login-btn" type="button">LOGIN</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="tests-screen" class="panel">
+      <div class="hero">
+        <h2>Available Tests</h2>
+        <p>Each test opens with its own dashboard, history, bookmarks, and progress.</p>
+      </div>
+      <div class="content">
+        <div class="master-header">
+          <div class="welcome-block">
+            <h2>Welcome, <span id="welcome-name">Student</span></h2>
+            <p>ROLL NO: <strong id="welcome-roll">000</strong></p>
+          </div>
+          <div class="master-actions">
+            <button class="btn btn-secondary" id="refresh-tests-btn" type="button">REFRESH TESTS</button>
+            <button class="btn btn-secondary" id="logout-btn" type="button">LOGOUT</button>
+          </div>
+        </div>
+
+        <div class="tips-box">
+          <strong>1000-Test Ready:</strong> Add your new <code>test-xx.html</code> file in this folder and add one new entry in <code>tests-index.json</code>. The dashboard will load it instantly.
+        </div>
+
+        <div id="tests-grid" class="tests-grid"></div>
+        <div id="empty-state" class="empty-state" style="display:none;"></div>
+        <div class="helper-note">After adding a new test file, update <strong>tests-index.json</strong> once and press <strong>REFRESH TESTS</strong>.</div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const MASTER_LOGIN_KEY = 'study_point_master_login';
+    const ACTIVE_TEST_KEY = 'study_point_active_test_v1';
+    const TESTS_INDEX_FILE = 'tests-index.json';
+
+    const loginScreen = document.getElementById('login-screen');
+    const testsScreen = document.getElementById('tests-screen');
+    const userNameInput = document.getElementById('user-name-input');
+    const rollNumberInput = document.getElementById('roll-number-input');
+    const welcomeName = document.getElementById('welcome-name');
+    const welcomeRoll = document.getElementById('welcome-roll');
+    const testsGrid = document.getElementById('tests-grid');
+    const emptyState = document.getElementById('empty-state');
+
+    function showScreen(screen) {
+      loginScreen.classList.toggle('active', screen === 'login');
+      testsScreen.classList.toggle('active', screen === 'tests');
+    }
+
+    function getCandidate() {
+      try {
+        return JSON.parse(localStorage.getItem(MASTER_LOGIN_KEY) || 'null');
+      } catch {
+        return null;
+      }
+    }
+
+    function setCandidate(candidate) {
+      localStorage.setItem(MASTER_LOGIN_KEY, JSON.stringify(candidate));
+    }
+
+    function clearCandidate() {
+      localStorage.removeItem(MASTER_LOGIN_KEY);
+      sessionStorage.removeItem(ACTIVE_TEST_KEY);
+    }
+
+    function normalizeTestEntry(item, index) {
+      const safeId = item?.id || `test-${String(index + 1).padStart(2, '0')}`;
+      return {
+        id: safeId,
+        title: item?.title || item?.examTitle || safeId.toUpperCase(),
+        description: item?.description || item?.examDescription || 'Ready to open this test.',
+        file: item?.file || `${safeId}.html`,
+        examPeriodMinutes: Number.isFinite(Number(item?.examPeriodMinutes)) ? Number(item.examPeriodMinutes) : null,
+        totalMarks: Number.isFinite(Number(item?.totalMarks)) ? Number(item.totalMarks) : null,
+        questionCount: Number.isFinite(Number(item?.questionCount)) ? Number(item.questionCount) : null,
+        sectionCount: Number.isFinite(Number(item?.sectionCount)) ? Number(item.sectionCount) : null,
+      };
+    }
+
+    async function loadRegistry() {
+      const response = await fetch(TESTS_INDEX_FILE, { cache: 'no-store' });
+      if (!response.ok) {
+        throw new Error(`Unable to load ${TESTS_INDEX_FILE}`);
+      }
+      const data = await response.json();
+      if (!Array.isArray(data)) {
+        throw new Error(`${TESTS_INDEX_FILE} must contain an array`);
+      }
+      return data.map(normalizeTestEntry).sort((a, b) => a.file.localeCompare(b.file, undefined, { numeric: true }));
+    }
+
+    function renderTests(testList) {
+      testsGrid.innerHTML = '';
+      if (!testList.length) {
+        emptyState.style.display = 'block';
+        emptyState.innerHTML = 'No tests are listed in <code>tests-index.json</code> yet. Add your first entry and press REFRESH TESTS.';
+        return;
+      }
+
+      emptyState.style.display = 'none';
+      testList.forEach((test) => {
+        const card = document.createElement('article');
+        card.className = 'test-card';
+        card.innerHTML = `
+          <div class="test-badge">${test.id}</div>
+          <div>
+            <h3>${test.title}</h3>
+            <p>${test.description}</p>
+          </div>
+          <div class="meta-grid">
+            <div class="meta-chip"><span>Questions</span><strong>${test.questionCount ?? '--'}</strong></div>
+            <div class="meta-chip"><span>Total Marks</span><strong>${test.totalMarks ?? '--'}</strong></div>
+            <div class="meta-chip"><span>Exam Time</span><strong>${test.examPeriodMinutes ? `${test.examPeriodMinutes} min` : '--'}</strong></div>
+            <div class="meta-chip"><span>Sections</span><strong>${test.sectionCount ?? '--'}</strong></div>
+          </div>
+        `;
+        const openBtn = document.createElement('button');
+        openBtn.className = 'btn btn-primary';
+        openBtn.type = 'button';
+        openBtn.textContent = 'OPEN TEST DASHBOARD';
+        openBtn.addEventListener('click', () => {
+          sessionStorage.removeItem(ACTIVE_TEST_KEY);
+          window.location.href = test.file;
+        });
+        card.appendChild(openBtn);
+        testsGrid.appendChild(card);
+      });
+    }
+
+    async function loadTests() {
+      testsGrid.innerHTML = '<div class="empty-state">Loading tests registry...</div>';
+      try {
+        const tests = await loadRegistry();
+        renderTests(tests);
+      } catch (error) {
+        testsGrid.innerHTML = '';
+        emptyState.style.display = 'block';
+        emptyState.innerHTML = `Could not load <code>${TESTS_INDEX_FILE}</code>.<br>${error.message}`;
+      }
+    }
+
+    function updateWelcome(candidate) {
+      welcomeName.textContent = candidate.userName || 'Student';
+      welcomeRoll.textContent = candidate.rollNumber || '000';
+      userNameInput.value = candidate.userName || '';
+      rollNumberInput.value = candidate.rollNumber || '';
+    }
+
+    function submitLogin() {
+      const candidate = {
+        userName: userNameInput.value.trim(),
+        rollNumber: rollNumberInput.value.trim()
+      };
+
+      if (!candidate.userName || !candidate.rollNumber) {
+        alert('Please enter your name and roll number.');
+        return;
+      }
+
+      setCandidate(candidate);
+      updateWelcome(candidate);
+      showScreen('tests');
+      loadTests();
+    }
+
+    document.getElementById('login-btn').addEventListener('click', submitLogin);
+    document.getElementById('refresh-tests-btn').addEventListener('click', loadTests);
+    document.getElementById('logout-btn').addEventListener('click', () => {
+      clearCandidate();
+      showScreen('login');
+    });
+
+    [userNameInput, rollNumberInput].forEach((input) => {
+      input.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') submitLogin();
+      });
+    });
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const candidate = getCandidate();
+      if (candidate && candidate.userName && candidate.rollNumber) {
+        updateWelcome(candidate);
+        showScreen('tests');
+        loadTests();
+      } else {
+        showScreen('login');
+      }
+    });
+  </script>
+</body>
+</html>
