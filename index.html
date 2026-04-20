@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="hi">
 
 <head>
@@ -1230,10 +1230,12 @@
     .history-card-banner,
     .bookmark-card-banner {
       background: linear-gradient(135deg, var(--tcs-blue) 0%, #1d4a7a 100%);
-      padding: 10px 16px;
+      padding: 12px 16px;
       display: flex;
-      justify-content: space-between;
-      align-items: center;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: flex-start;
+      gap: 3px;
     }
 
     .history-attempt-badge,
@@ -2803,8 +2805,13 @@
           card.className = "history-card";
           card.innerHTML = `
             <div class="history-card-banner" style="background: ${gradientColor};">
-              <span class="history-attempt-badge">प्रयास #${attemptNo} - ${testName}</span>
-              <span class="history-date">📅 ${item.timestamp}</span>
+              <div style="text-align: center; width: 100%; font-weight: 900; font-size: 1rem; color: white; margin-bottom: 2px; text-decoration: underline;">
+                ${testName}
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; font-size: 0.8rem;">
+                <span class="history-attempt-badge">प्रयास #${attemptNo}</span>
+                <span style="color: rgba(255,255,255,0.9);">📅 ${item.timestamp}</span>
+              </div>
             </div>
             <div class="history-main">
               <div class="history-score-block">
@@ -4008,8 +4015,13 @@
           card.className = "history-card";
           card.innerHTML = `
                     <div class=\"history-card-banner\" style=\"background: ${gradientColor};\">
-                        <span class=\"history-attempt-badge\">🎯 प्रयास #${attemptNo}</span>
-                        <span class=\"history-date\">📅 ${item.timestamp}</span>
+                        <div style=\"text-align: center; width: 100%; font-weight: 900; font-size: 1rem; color: white; margin-bottom: 2px; text-decoration: underline;\">
+                            ${item.testName}
+                        </div>
+                        <div style=\"display: flex; justify-content: space-between; align-items: center; width: 100%; font-size: 0.8rem;\">
+                            <span class=\"history-attempt-badge\">प्रयास #${attemptNo}</span>
+                            <span style=\"color: rgba(255,255,255,0.9);\">📅 ${item.timestamp}</span>
+                        </div>
                     </div>
                     <div class=\"history-main\">
                         <div class=\"history-score-block\">
