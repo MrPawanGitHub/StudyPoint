@@ -7,6 +7,16 @@
     content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Study Point</title>
 
+  <!-- PWA Configuration -->
+  <link rel="manifest" href="./manifest.json">
+  <meta name="theme-color" content="#326295">
+  <meta name="description" content="BPSC PRE परीक्षा के लिए ऑनलाइन परीक्षण प्लेटफॉर्म">
+  <link rel="icon" type="image/png" href="./icons/icon-192x192.png">
+  <link rel="apple-touch-icon" href="./icons/icon-192x192.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Study Point">
+
   <!-- प्रीमियम टाइटल्स के लिए आकर्षक और सुंदर फॉन्ट -->
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@900&display=swap" rel="stylesheet">
 
@@ -98,6 +108,257 @@
       overflow: hidden;
     }
 
+    /* ============================================================
+     * 📸 IMAGE STYLING - imgSize और imgPosition के लिए (IMPROVED)
+     * ============================================================ */
+
+    /* Image Container Base - सुधारा गया */
+    #display-q-image-container {
+      margin-bottom: 24px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      padding: 15px 0;
+    }
+
+    /* Image Wrapper - Simplified Styling */
+    .img-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 12px;
+      border-radius: 12px;
+      background: transparent;
+      box-shadow: none;
+    }
+
+    .img-wrapper img {
+      border-radius: 8px;
+      display: block;
+      max-width: 100%;
+      height: auto;
+      object-fit: contain;
+    }
+
+    /* ===== IMPROVED SIZE CLASSES - Dynamic & Responsive ===== */
+
+    /* Small Size - 150px to 200px */
+    .img-size-small {
+      max-width: clamp(120px, 30vw, 200px);
+    }
+
+    /* Medium Size - 300px to 450px */
+    .img-size-medium {
+      max-width: clamp(250px, 60vw, 450px);
+    }
+
+    /* Large Size - 500px to 700px */
+    .img-size-large {
+      max-width: clamp(400px, 85vw, 700px);
+    }
+
+    /* Extra Large Size - Full width responsive */
+    .img-size-xlarge {
+      max-width: clamp(500px, 95vw, 900px);
+    }
+
+    /* Full Width Option */
+    .img-size-full {
+      width: 100%;
+      max-width: 100%;
+    }
+
+    /* ===== ASPECT RATIO SUPPORT ===== */
+    .img-wrapper.aspect-square {
+      aspect-ratio: 1 / 1;
+    }
+
+    .img-wrapper.aspect-video {
+      aspect-ratio: 16 / 9;
+    }
+
+    .img-wrapper.aspect-portrait {
+      aspect-ratio: 3 / 4;
+    }
+
+    /* ===== POSITION-BASED LAYOUTS - Enhanced ===== */
+    .question-with-image {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      width: 100%;
+      transition: gap 0.3s ease;
+    }
+
+    /* Top Position (Default) */
+    .img-position-top {
+      flex-direction: column;
+    }
+
+    .img-position-top .img-wrapper {
+      order: -1;
+    }
+
+    /* Bottom Position */
+    .img-position-bottom {
+      flex-direction: column;
+    }
+
+    .img-position-bottom .img-wrapper {
+      order: 1;
+    }
+
+    /* Center Position */
+    .img-position-center {
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .img-position-center .img-wrapper {
+      order: 0;
+    }
+
+    /* ===== DESKTOP LAYOUTS (768px+) ===== */
+    @media (min-width: 768px) {
+      .question-with-image {
+        gap: 24px;
+      }
+
+      /* Left Position */
+      .img-position-left {
+        flex-direction: row;
+        align-items: flex-start;
+        gap: 24px;
+      }
+
+      .img-position-left .img-wrapper {
+        order: -1;
+        flex-shrink: 0;
+        width: clamp(250px, 30vw, 350px);
+      }
+
+      .img-position-left .question-text {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+      }
+
+      /* Right Position */
+      .img-position-right {
+        flex-direction: row;
+        align-items: flex-start;
+        gap: 24px;
+      }
+
+      .img-position-right .img-wrapper {
+        order: 1;
+        flex-shrink: 0;
+        width: clamp(250px, 30vw, 350px);
+      }
+
+      .img-position-right .question-text {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+      }
+
+      /* Inline Position (Text + Image same line) */
+      .img-position-inline {
+        flex-direction: row;
+        align-items: center;
+        gap: 20px;
+      }
+
+      .img-position-inline .img-wrapper {
+        flex-shrink: 0;
+        width: clamp(150px, 25vw, 280px);
+      }
+
+      .img-position-inline .question-text {
+        flex: 1;
+      }
+    }
+
+    /* ===== TABLET LAYOUT (481px - 767px) ===== */
+    @media (min-width: 481px) and (max-width: 767px) {
+      .question-with-image {
+        gap: 18px;
+      }
+
+      .img-position-left,
+      .img-position-right,
+      .img-position-inline {
+        flex-direction: column;
+      }
+
+      .img-position-left .img-wrapper,
+      .img-position-right .img-wrapper,
+      .img-position-inline .img-wrapper {
+        width: 100%;
+        order: -1;
+      }
+
+      .img-size-large {
+        max-width: 100%;
+      }
+
+      .img-size-xlarge {
+        max-width: 100%;
+      }
+    }
+
+    /* ===== MOBILE LAYOUT (480px and below) ===== */
+    @media (max-width: 480px) {
+      .question-with-image {
+        gap: 15px;
+      }
+
+      #display-q-image-container {
+        margin-bottom: 16px;
+        padding: 10px 0;
+      }
+
+      .img-wrapper {
+        padding: 10px;
+      }
+
+      .img-size-small {
+        max-width: clamp(100px, 45vw, 160px);
+      }
+
+      .img-size-medium {
+        max-width: 100%;
+      }
+
+      .img-size-large,
+      .img-size-xlarge {
+        max-width: 100%;
+      }
+
+      .img-position-left,
+      .img-position-right,
+      .img-position-inline {
+        flex-direction: column;
+      }
+
+      .img-position-left .img-wrapper,
+      .img-position-right .img-wrapper,
+      .img-position-inline .img-wrapper {
+        width: 100%;
+        order: -1;
+      }
+    }
+
+    /* ===== UTILITY CLASSES ===== */
+    .img-centered {
+      display: flex;
+      justify-content: center;
+      width: 100%;
+    }
+
     .brand-logo-container {
       display: flex;
       flex-direction: column;
@@ -111,6 +372,7 @@
       font-size: 3rem;
       background: var(--logo-gradient);
       -webkit-background-clip: text;
+      background-clip: text;
       -webkit-text-fill-color: transparent;
       text-transform: uppercase;
       letter-spacing: 1px;
@@ -581,7 +843,7 @@
       gap: 10px;
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
       backdrop-filter: blur(5px);
-      max-width: 200px;
+      max-width: 320px;
     }
 
     .unified-user-card .u-icon {
@@ -618,6 +880,10 @@
       font-weight: 900;
       font-size: 0.75rem;
       text-transform: uppercase;
+      margin-top: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     /* फ़ॉन्ट कंट्रोल बटन स्टाइल */
@@ -1655,6 +1921,7 @@
         margin-bottom: 20px;
         text-align: center;
         -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
         box-shadow: none !important;
         border: none !important;
       }
@@ -1668,6 +1935,7 @@
         display: block;
         background: var(--logo-gradient) !important;
         -webkit-background-clip: text !important;
+        background-clip: text !important;
         -webkit-text-fill-color: transparent !important;
         text-transform: uppercase;
         text-shadow: 0 4px 8px rgba(0, 0, 0, 0.25);
@@ -1745,6 +2013,7 @@
       margin-bottom: 20px;
       box-shadow: none;
       -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
     }
 
     .ps-stats-grid {
@@ -2103,6 +2372,11 @@
       <!-- Question text -->
       <div id="display-q-text"
         style="font-size: 1.1rem; margin-bottom: 20px; line-height: 1.6; font-weight: bold; color: var(--tcs-blue);">
+      </div>
+
+      <!-- 📸 Question Image Container with Advanced Styling -->
+      <div id="display-q-image-container"
+        style="margin-bottom: 20px; display: flex; justify-content: center; align-items: center;">
       </div>
 
       <!-- Status badge -->
@@ -3507,7 +3781,29 @@
         statusEl.innerHTML = "";
       }
 
-      qTextEl.innerHTML = `${d.q}`;
+      // Display question with optional image
+      let qContent = `${d.q}`;
+      let imageHTML = '';
+
+      if (d.img) {
+        // Image properties से class names बनाएं
+        const imgSize = d.imgSize ? `img-size-${d.imgSize}` : 'img-size-large';
+        const imgPosition = d.imgPosition ? `img-position-${d.imgPosition}` : 'img-position-bottom';
+
+        imageHTML = `
+          <div class="question-with-image ${imgPosition}">
+            <div class="img-wrapper ${imgSize}">
+              <img src="${d.img}" alt="Question Image">
+            </div>
+            <div class="question-text" style="margin-bottom: 15px;">
+              ${d.q}
+            </div>
+          </div>
+        `;
+        qContent = imageHTML;
+      }
+      qTextEl.innerHTML = qContent;
+
       const optBox = document.getElementById('display-options');
       optBox.innerHTML = '';
       const ul = document.createElement('ul');
@@ -4466,6 +4762,63 @@
         if (storedBM) bookmarks = storedBM;
       }
     });
+  </script>
+
+  <!-- Service Worker Registration for PWA -->
+  <script>
+    // Service Worker को register करो
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/service-worker.js')
+          .then((registration) => {
+            console.log('✅ Service Worker registered:', registration);
+
+            // Update के लिए check करो
+            registration.addEventListener('updatefound', () => {
+              const newWorker = registration.installing;
+              newWorker.addEventListener('statechange', () => {
+                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                  console.log('🔄 नया version उपलब्ध है! पेज को refresh करें।');
+                  // Optional: User को notification दिखाओ
+                }
+              });
+            });
+          })
+          .catch((error) => {
+            console.error('❌ Service Worker registration failed:', error);
+          });
+      });
+
+      // PWA Install Prompt handling
+      let deferredPrompt;
+
+      window.addEventListener('beforeinstallprompt', (e) => {
+        // Prevent the mini-infobar from appearing
+        e.preventDefault();
+        // Stash the event for later use
+        deferredPrompt = e;
+        console.log('📱 Install prompt ready');
+
+        // Optional: Show your own install button/prompt
+        const installBtn = document.getElementById('install-btn');
+        if (installBtn) {
+          installBtn.style.display = 'block';
+          installBtn.addEventListener('click', async () => {
+            if (deferredPrompt) {
+              deferredPrompt.prompt();
+              const { outcome } = await deferredPrompt.userChoice;
+              console.log(`User response to install prompt: ${outcome}`);
+              deferredPrompt = null;
+            }
+          });
+        }
+      });
+
+      window.addEventListener('appinstalled', () => {
+        console.log('✅ PWA installed successfully!');
+        deferredPrompt = null;
+      });
+    }
   </script>
 </body>
 
