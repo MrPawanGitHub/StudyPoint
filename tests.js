@@ -236,7 +236,7 @@ TESTS.test1 = {
   id: 'test1',
   name: 'BPSC PRE - 01',
   description: 'इतिहास, जीव विज्ञान और गणित के 100 प्रश्नों की परीक्षा।',
-  emoji: '🏛️',
+  emoji: '🎯',
 
   // 🔧 SCHEDULING के लिए सिर्फ यह बदलें (MODIFY ONLY THIS for scheduling)
   // Format: "YYYY-MM-DD HH:MM" (24-hour) या null (available now)
@@ -392,7 +392,7 @@ TESTS.test2 = {
   id: 'test2',
   name: 'BPSC PRE - 02',
   description: 'भारत, विश्व, विज्ञान और इतिहास की परीक्षा',
-  emoji: '🏛️',
+  emoji: '🎯',
 
   // 🔧 SCHEDULING के लिए सिर्फ यह बदलें (MODIFY ONLY THIS for scheduling)
   // Format: "YYYY-MM-DD HH:MM" (24-hour) या null (available now)
@@ -770,16 +770,77 @@ TESTS.test2 = {
       a: 2  // ✅ हांगझोऊ बे ब्रिज
     }
   ]
-  
+
+};
+
+
+
+// ============================================================
+// ✅ TEST 3: BPSC PRE - 03 (Image Questions Demo)
+// ============================================================
+
+TESTS.test3 = {
+  id: 'test3',
+  name: 'BPSC PRE - 03 (Images Demo)',
+  description: 'इमेज वाले प्रश्नों का डेमो - भारत का भूगोल और जीव विज्ञान',
+  emoji: '🎯',
+
+  // 🔧 SCHEDULING के लिए सिर्फ यह बदलें
+  scheduledTime: null,
+
+  config: {
+    TEST_NAME: "BPSC PRE - 03",
+    TOTAL_QUESTIONS: 3,
+    TIME_LIMIT_MINUTES: 10,
+
+    SECTIONS: [
+      { name: "भारत की भूगोल", start: 0, end: 0 },
+      { name: "जनसंख्या आंकड़े", start: 1, end: 1 },
+      { name: "वन्यजीव", start: 2, end: 2 }
+    ],
+
+    MARKS_PER_CORRECT: 4,
+    MARKS_PER_WRONG: -1,
+
+    get TOTAL_MARKS() {
+      return this.TOTAL_QUESTIONS * this.MARKS_PER_CORRECT;
+    }
+  },
+
+  questions: [
+    {
+      id: 1,
+      q: "नीचे दिए गए नक्शे में भारत के किस भाग में सबसे अधिक जनसंख्या पाई जाती है?",
+      img: "./images/india-map.svg",
+      imgSize: "medium",                // 🆕 Size: small/medium/large
+      imgPosition: "bottom",           // 🆕 Position: top/bottom/left/right
+      o: ["उत्तर भारत", "दक्षिण भारत", "पश्चिम भारत", "पूर्व भारत"],
+      a: 0  // ✅ उत्तर भारत
+    },
+
+    {
+      id: 2,
+      q: "दिए गए चार्ट के अनुसार, भारत के किस क्षेत्र की जनसंख्या सबसे अधिक है?",
+      img: "./images/population-chart.svg",
+      imgSize: "medium",                // Size: small/medium/large
+      imgPosition: "bottom",           // Position: top/bottom/left/right
+      o: ["उत्तर", "दक्षिण", "पश्चिम", "मध्य"],
+      a: 2  // ✅ पश्चिम
+    },
+
+    {
+      id: 3,
+      q: "नीचे दिया गया चित्र किस जानवर का है, जो भारत में विलुप्त होने के कगार पर है?",
+      img: "./images/tiger.svg",
+      imgSize: "medium",               // Size: small/medium/large
+      imgPosition: "bottom",           // Position: top/bottom/left/right
+      o: ["सिंह", "बाघ", "तेंदुआ", "भेड़िया"],
+      a: 1  // ✅ बाघ
+    }
+  ]
 };
 
 */
-
-// ============================================================
-// ✅ TEST 3: BPSC PRE - 03
-// ============================================================
-
-
 
 
 
