@@ -1,0 +1,51 @@
+{
+  "name": "Study Point - BPSC परीक्षा प्रबंधन प्रणाली",
+  "short_name": "Study Point",
+  "description": "BPSC PRE परीक्षा के लिए ऑनलाइन परीक्षण प्लेटफॉर्म",
+  "start_url": "/",
+  "display": "standalone",
+  "scope": "/",
+  "orientation": "portrait-primary",
+  "theme_color": "#326295",
+  "background_color": "#f0f2f5",
+  "icons": [
+    {
+      "src": "./icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "./icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "categories": [
+    "education",
+    "productivity"
+  ],
+  "shortcuts": [
+    {
+      "name": "परीक्षा शुरू करें",
+      "short_name": "परीक्षा",
+      "description": "नई परीक्षा लें",
+      "url": "/?test=test1",
+      "icons": [
+        {
+          "src": "/icons/icon-192x192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ],
+  "prefer_related_applications": false
+}
