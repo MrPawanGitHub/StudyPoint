@@ -5151,7 +5151,7 @@
               const newWorker = registration.installing;
               newWorker.addEventListener('statechange', () => {
                 if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                  console.log('🔄 नया version उपलब्ध है! पेज को refresh करें।');
+                   window.location.reload();
                   // Optional: User को notification दिखाओ
                 }
               });
