@@ -1083,24 +1083,30 @@
     .options-list li {
       margin-bottom: 12px;
       padding: 12px;
-      border: 1px solid #e0e0e0;
+      border: 1px solid #d1d5db;
       border-radius: 6px;
       cursor: pointer;
       display: flex;
       align-items: center;
       font-size: 1rem;
+      font-weight: 500;
+      line-height: 1.7;
+      color: #374151;
       transition: background 0.3s;
     }
 
     .options-list li.correct-ans {
       background-color: var(--correct-bg) !important;
       border: 2px solid var(--ans-green) !important;
-      font-weight: bold;
+      font-weight: 600;
+      color: #065f46;
     }
 
     .options-list li.wrong-ans {
       background-color: var(--wrong-bg) !important;
       border: 2px solid var(--not-ans-red) !important;
+      font-weight: 600;
+      color: #7f1d1d;
     }
 
     .options-list input {
@@ -1110,8 +1116,10 @@
     }
 
     .opt-label {
-      font-weight: bold;
-      margin-right: 8px;
+      font-weight: 700;
+      margin-right: 10px;
+      color: #1f2937;
+      min-width: 30px;
     }
 
     .bottom-nav-container {
@@ -2477,6 +2485,39 @@
   <script src="tests.js"></script>
 
   <script>
+    // ==================================================
+    // 🔍 DIAGNOSTIC: Check if tests.js loaded correctly
+    // ==================================================
+    console.log('📚 tests.js loading diagnostic...');
+
+    if (typeof TESTS === 'undefined') {
+      console.error('❌ CRITICAL: TESTS object not defined - tests.js has SYNTAX ERROR!');
+    } else {
+      console.log('✅ TESTS object loaded:', Object.keys(TESTS).join(', '));
+    }
+
+    // सुरक्षा जांच: अगर CONFIG load नहीं हुआ तो डिफ़ॉल्ट value set करो
+    if (typeof CONFIG === 'undefined' || !CONFIG) {
+      console.error('❌ CONFIG is undefined! tests.js may have syntax errors');
+      console.error('   Check browser console for JavaScript errors');
+      // डिफ़ॉल्ट कॉन्फ़िगरेशन - जब तक TESTS.test1 load न हो
+      CONFIG = {
+        SECTIONS: [
+          { name: "Section 1", start: 0, end: 33 },
+          { name: "Section 2", start: 34, end: 66 },
+          { name: "Section 3", start: 67, end: 99 }
+        ],
+        TOTAL_QUESTIONS: 100,
+        TIME_LIMIT_MINUTES: 120,
+        TEST_NAME: "DEFAULT TEST"
+      };
+      quizData = [];
+      window.CONFIG = CONFIG;
+      window.quizData = quizData;
+    } else {
+      console.log('✅ CONFIG loaded successfully:', CONFIG.TEST_NAME);
+    }
+
     // कंबाइंड फाइल से CONFIG और quizData ऑब्जेक्ट लोड हो गए हैं
     // CONFIG, quizData, और helpers functions tests.js से लोड हो गए हैं
     // CONFIG and quizData objects are loaded from tests.js file
@@ -2574,34 +2615,49 @@
     }
 
     function switchScreen(screenId) {
-      if (!isLoggedIn && screenId !== 'login-screen') {
-        screenId = 'login-screen';
-      }
+      try {
+        console.log('🎯 switchScreen called with:', screenId);
 
-      currentScreen = screenId === 'main-test-area' ? 'main' : screenId.split('-')[0];
-      const screens = ['login-screen', 'test-list-screen', 'dashboard-screen', 'tests-dashboard-screen', 'instructions-screen', 'main-test-area', 'result-screen', 'history-screen', 'bookmarks-screen'];
-      screens.forEach(s => {
-        const el = document.getElementById(s);
-        if (el) el.style.display = (s === screenId) ? (s === 'main-test-area' || s === 'instructions-screen' || s === 'bookmarks-screen' || s === 'tests-dashboard-screen' || s === 'test-list-screen' ? 'flex' : 'block') : 'none';
-      });
+        if (!isLoggedIn && screenId !== 'login-screen') {
+          console.log('⚠️ Not logged in, forcing login-screen');
+          screenId = 'login-screen';
+        }
 
-      // 🆕 Auto-refresh management
-      const isExamScreen = screenId === 'test-list-screen' || screenId === 'tests-dashboard-screen';
-      if (isExamScreen) {
-        startAutoRefreshExamScreen();
-      } else {
-        stopAutoRefreshExamScreen();
-      }
+        currentScreen = screenId === 'main-test-area' ? 'main' : screenId.split('-')[0];
+        const screens = ['login-screen', 'test-list-screen', 'dashboard-screen', 'tests-dashboard-screen', 'instructions-screen', 'main-test-area', 'result-screen', 'history-screen', 'bookmarks-screen'];
 
-      const headerScore = document.getElementById('header-center-score');
-      if (screenId === 'main-test-area' && isFinished && currentScreen !== 'review') {
-        headerScore.style.display = 'block';
-      } else {
-        headerScore.style.display = 'none';
-      }
+        screens.forEach(s => {
+          const el = document.getElementById(s);
+          if (el) {
+            el.style.display = (s === screenId) ? (s === 'main-test-area' || s === 'instructions-screen' || s === 'bookmarks-screen' || s === 'tests-dashboard-screen' || s === 'test-list-screen' ? 'flex' : 'block') : 'none';
+            console.log(`  ${s}: ${el.style.display}`);
+          } else {
+            console.warn(`  ⚠️ Element not found: ${s}`);
+          }
+        });
 
-      if (screenId !== 'main-test-area' && screenId !== 'instructions-screen') {
-        document.body.classList.remove('no-select');
+        // 🆕 Auto-refresh management
+        const isExamScreen = screenId === 'test-list-screen' || screenId === 'tests-dashboard-screen';
+        if (isExamScreen) {
+          startAutoRefreshExamScreen();
+        } else {
+          stopAutoRefreshExamScreen();
+        }
+
+        const headerScore = document.getElementById('header-center-score');
+        if (screenId === 'main-test-area' && isFinished && currentScreen !== 'review') {
+          headerScore.style.display = 'block';
+        } else {
+          headerScore.style.display = 'none';
+        }
+
+        if (screenId !== 'main-test-area' && screenId !== 'instructions-screen') {
+          document.body.classList.remove('no-select');
+        }
+
+        console.log('✅ Screen switched successfully to:', screenId);
+      } catch (error) {
+        console.error('❌ switchScreen error:', error);
       }
     }
 
@@ -2632,34 +2688,72 @@
     });
 
     function handleScreenTransition(screen, push = true) {
-      if (!isLoggedIn && screen !== 'login') {
-        switchScreen('login-screen');
-        return;
-      }
+      try {
+        console.log('📱 Screen transition requested:', screen, 'isLoggedIn:', isLoggedIn);
 
-      if (push) {
-        window.history.pushState({ screen: screen }, "");
-      }
-      switch (screen) {
-        case 'login': switchScreen('login-screen'); break;
-        case 'test-list': switchScreen('test-list-screen'); loadAndDisplayTestList(); break;
-        case 'dashboard': switchScreen('dashboard-screen'); showDashboard(); break;
-        case 'instructions':
-          updateInstructionsContent();
-          switchScreen('instructions-screen');
-          break;
-        case 'exam':
-          if (!isFinished) beginUI();
-          else viewAnswers(false);
-          break;
-        case 'result': switchScreen('result-screen'); showFinalResults(); break;
-        case 'history': openAllTestsHistory(false); break;
-        case 'tests': openTestsDashboard(false); break;
-        case 'review':
-          currentScreen = 'review';
-          viewAnswers(false);
-          break;
-        case 'bookmarks': openBookmarks(false); break;
+        if (!isLoggedIn && screen !== 'login') {
+          console.log('⚠️ Not logged in, redirecting to login');
+          switchScreen('login-screen');
+          return;
+        }
+
+        if (push) {
+          window.history.pushState({ screen: screen }, "");
+        }
+
+        switch (screen) {
+          case 'login':
+            console.log('➡️ Switching to login screen');
+            switchScreen('login-screen');
+            break;
+          case 'test-list':
+            console.log('➡️ Switching to test list');
+            switchScreen('test-list-screen');
+            loadAndDisplayTestList();
+            break;
+          case 'dashboard':
+            console.log('➡️ Switching to dashboard');
+            switchScreen('dashboard-screen');
+            showDashboard();
+            break;
+          case 'instructions':
+            console.log('➡️ Switching to instructions');
+            updateInstructionsContent();
+            switchScreen('instructions-screen');
+            break;
+          case 'exam':
+            console.log('➡️ Switching to exam');
+            if (!isFinished) beginUI();
+            else viewAnswers(false);
+            break;
+          case 'result':
+            console.log('➡️ Switching to result');
+            switchScreen('result-screen');
+            showFinalResults();
+            break;
+          case 'history':
+            console.log('➡️ Switching to history');
+            openAllTestsHistory(false);
+            break;
+          case 'tests':
+            console.log('➡️ Switching to tests dashboard');
+            openTestsDashboard(false);
+            break;
+          case 'review':
+            console.log('➡️ Switching to review');
+            currentScreen = 'review';
+            viewAnswers(false);
+            break;
+          case 'bookmarks':
+            console.log('➡️ Switching to bookmarks');
+            openBookmarks(false);
+            break;
+          default:
+            console.warn('⚠️ Unknown screen:', screen);
+        }
+      } catch (error) {
+        console.error('❌ Screen transition error:', error);
+        showModal("त्रुटि!", "स्क्रीन बदलने में समस्या: " + error.message);
       }
     }
 
@@ -2817,27 +2911,48 @@
     }
 
     window.handleLogin = function () {
-      const nInput = document.getElementById('user-name-input').value.trim();
-      const rInput = document.getElementById('roll-number-input').value.trim();
+      try {
+        const nInput = document.getElementById('user-name-input').value.trim();
+        const rInput = document.getElementById('roll-number-input').value.trim();
 
-      if (!nInput || !rInput) {
-        showModal("गलती!", "कृपया अपना नाम और रोल नंबर दर्ज करें।");
-        return;
+        if (!nInput || !rInput) {
+          showModal("गलती!", "कृपया अपना नाम और रोल नंबर दर्ज करें।");
+          return;
+        }
+
+        // Global variables को set करो
+        userName = nInput;
+        rollNumber = rInput;
+        isLoggedIn = true;
+
+        console.log('✅ Login successful:', { userName, rollNumber });
+
+        // क्रेडेंशियल्स सेव करना
+        localStorage.setItem(USER_CRED_KEY, JSON.stringify({ userName: nInput, rollNumber: rInput }));
+        console.log('✅ Credentials saved to localStorage');
+
+        // बुकमार्क लोड करना
+        try {
+          const bookmarkKey = getBookmarkKey(rollNumber);
+          const storedBM = JSON.parse(localStorage.getItem(bookmarkKey));
+          if (storedBM && storedBM.length === CONFIG.TOTAL_QUESTIONS) {
+            bookmarks = storedBM;
+            console.log('✅ Bookmarks loaded:', bookmarks.length);
+          } else {
+            console.log('⚠️ No valid bookmarks found in storage');
+          }
+        } catch (bError) {
+          console.warn('⚠️ Error loading bookmarks:', bError);
+        }
+
+        // Dashboard में जाने से पहले चेक करो
+        console.log('🔄 Moving to dashboard...');
+        handleScreenTransition('dashboard');
+
+      } catch (error) {
+        console.error('❌ Login error:', error);
+        showModal("त्रुटि!", "लॉगिन में समस्या आई: " + error.message);
       }
-
-      userName = nInput;
-      rollNumber = rInput;
-      isLoggedIn = true;
-
-      // क्रेडेंशियल्स सेव करना
-      localStorage.setItem(USER_CRED_KEY, JSON.stringify({ userName: nInput, rollNumber: rInput }));
-
-      // बुकमार्क लोड करना
-      const storedBM = JSON.parse(localStorage.getItem(getBookmarkKey(rollNumber)));
-      if (storedBM && storedBM.length === CONFIG.TOTAL_QUESTIONS) bookmarks = storedBM;
-
-      // अपडेट: अब सीधे डैशबोर्ड पर जाएं (लॉजिक अपडेट)
-      handleScreenTransition('dashboard');
     }
 
     window.confirmLogout = () => showModal("लॉगआउट!", "क्या आप बाहर निकलना चाहते हैं?", () => handleLogout());
@@ -2860,43 +2975,84 @@
     };
 
     function showDashboard() {
-      // सभी tests के history से latest exam निकालें (test switch होने पर भी काम करे)
-      let allExams = [];
-      const targetPattern = 'exam_history_roll_' + rollNumber;
+      try {
+        console.log('📊 showDashboard called for user:', userName, 'roll:', rollNumber);
 
-      for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        if (key && key.includes(targetPattern)) {
-          try {
-            const testHistory = JSON.parse(localStorage.getItem(key)) || [];
-            allExams = allExams.concat(testHistory);
-          } catch (e) {
-            console.error('Error parsing history for key ' + key + ':', e);
+        // सभी tests के history से latest exam निकालें (test switch होने पर भी काम करे)
+        let allExams = [];
+        const targetPattern = 'exam_history_roll_' + rollNumber;
+
+        for (let i = 0; i < localStorage.length; i++) {
+          const key = localStorage.key(i);
+          if (key && key.includes(targetPattern)) {
+            try {
+              const testHistory = JSON.parse(localStorage.getItem(key)) || [];
+              allExams = allExams.concat(testHistory);
+              console.log(`  📋 Found ${testHistory.length} exams in key: ${key}`);
+            } catch (e) {
+              console.error('Error parsing history for key ' + key + ':', e);
+            }
           }
         }
+
+        // सभी exams को newest first order में sort करें
+        allExams.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+        const lastExam = allExams.length > 0 ? allExams[0] : null;
+
+        console.log(`  📈 Total exams found: ${allExams.length}, Last exam:`, lastExam ? lastExam.timestamp : 'None');
+
+        // UI को update करो
+        const userNameEl = document.getElementById('db-user-name');
+        const rollNumberEl = document.getElementById('db-roll-number');
+
+        if (userNameEl) userNameEl.innerText = userName;
+        else console.warn('⚠️ db-user-name element not found');
+
+        if (rollNumberEl) rollNumberEl.innerText = rollNumber;
+        else console.warn('⚠️ db-roll-number element not found');
+
+        isFinished = false;
+
+        // बुकमार्क लोड करना
+        try {
+          const bookmarkKey = getBookmarkKey(rollNumber);
+          const storedBM = JSON.parse(localStorage.getItem(bookmarkKey));
+          if (storedBM && storedBM.length === CONFIG.TOTAL_QUESTIONS) {
+            bookmarks = storedBM;
+            console.log('✅ Bookmarks loaded successfully');
+          }
+        } catch (e) {
+          console.warn('⚠️ Error loading bookmarks:', e);
+        }
+
+        // Score card को display करो
+        const scoreCard = document.getElementById('db-score-card');
+        if (scoreCard) {
+          if (lastExam) {
+            const scoreEl = document.getElementById('db-last-score');
+            const dateEl = document.getElementById('db-last-date');
+
+            if (scoreEl) scoreEl.innerText = `${lastExam.score} / ${lastExam.totalMarks}`;
+            if (dateEl) dateEl.innerText = `अंतिम टेस्ट: ${lastExam.timestamp}`;
+            if (scoreEl) scoreEl.style.display = 'block';
+
+            scoreCard.style.display = 'flex';
+            console.log('✅ Last score displayed');
+          } else {
+            scoreCard.style.display = 'none';
+            console.log('⚠️ No exams found, hiding score card');
+          }
+        } else {
+          console.warn('⚠️ db-score-card element not found');
+        }
+
+        console.log('✅ Dashboard setup complete');
+        switchScreen('dashboard-screen');
+
+      } catch (error) {
+        console.error('❌ Dashboard error:', error);
+        showModal("त्रुटि!", "डैशबोर्ड लोड करने में समस्या: " + error.message);
       }
-
-      // सभी exams को newest first order में sort करें
-      allExams.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-      const lastExam = allExams.length > 0 ? allExams[0] : null;
-
-      document.getElementById('db-user-name').innerText = userName;
-      document.getElementById('db-roll-number').innerText = rollNumber;
-
-      isFinished = false;
-
-      const storedBM = JSON.parse(localStorage.getItem(getBookmarkKey(rollNumber)));
-      if (storedBM && storedBM.length === 100) bookmarks = storedBM;
-
-      const scoreCard = document.getElementById('db-score-card');
-      if (lastExam) {
-        document.getElementById('db-last-score').innerText = `${lastExam.score} / ${lastExam.totalMarks}`;
-        document.getElementById('db-last-date').innerText = `अंतिम टेस्ट: ${lastExam.timestamp}`;
-        scoreCard.style.display = 'flex';
-      } else {
-        scoreCard.style.display = 'none';
-      }
-      switchScreen('dashboard-screen');
     }
 
     window.viewLastResult = () => {
@@ -3337,6 +3493,46 @@
           const maxOptLength = Math.max(...opts.map(o => o.length));
           const gridCols = maxOptLength > 25 ? 'repeat(4, 1fr)' : 'repeat(2, 1fr)';
 
+          // Image HTML generate करो (अगर image है तो)
+          let imageHTML = '';
+          if (qData.img) {
+            const imgSize = qData.imgSize ? `img-size-${qData.imgSize}` : 'img-size-large';
+            imageHTML += `
+              <div style="margin-bottom: 16px; text-align: center;">
+                <div class="img-wrapper ${imgSize}">
+                  <img src="${qData.img}" style="max-width: 100%; height: auto; border-radius: 8px; display: block;">
+                </div>
+              </div>
+            `;
+          }
+
+          // Multiple images (विकल्पों के साथ) add करो
+          if (qData.imgs && Array.isArray(qData.imgs) && qData.imgs.length > 0) {
+            const imgSize = qData.imgSize ? `img-size-${qData.imgSize}` : 'img-size-large';
+            const gridCols_imgs = qData.imgs.length > 2 ? `repeat(${qData.imgs.length}, 1fr)` : `repeat(2, 1fr)`;
+            imageHTML += `
+              <div style="margin: 15px 0;">
+                <div style="display: grid; grid-template-columns: ${gridCols_imgs}; gap: 15px;">
+            `;
+            qData.imgs.forEach((img, imgIdx) => {
+              const label = qData.imgLabels ? qData.imgLabels[imgIdx] : (imgIdx + 1);
+              imageHTML += `
+                <div style="text-align: center;">
+                  <div class="img-wrapper ${imgSize}" style="margin-bottom: 10px;">
+                    <img src="${img}" alt="Image ${label}" style="max-width: 100%; height: auto; object-fit: contain; border-radius: 8px; display: block;">
+                  </div>
+                  <div style="font-weight: 700; font-size: 0.9rem; color: #326295;">
+                    ${label}
+                  </div>
+                </div>
+              `;
+            });
+            imageHTML += `
+                </div>
+              </div>
+            `;
+          }
+
           const card = document.createElement('div');
           card.className = "bookmark-card";
           card.style.background = "white";
@@ -3356,12 +3552,24 @@
               <div style="margin-bottom: 16px; color: #1f2937; font-weight: 600; font-size: 0.95rem;">
                 "${qData.q}"
               </div>
+              ${imageHTML}
               <div style="display: grid; grid-template-columns: ${gridCols}; gap: 10px; margin-bottom: 12px;" class="bookmark-options-grid-${item.qIdx}">
-                ${opts.map((opt, i) => `
-                  <div class="bm-opt-${item.qIdx}-${i}" data-correct="${i === qData.a}" style="padding: 12px 14px; border-radius: 10px; border: 2px solid #d1d5db; background: #f9fafb; color: #374151; font-weight: 600; font-size: 0.9rem; text-align: left; line-height: 1.5; word-wrap: break-word; transition: all 0.2s ease; cursor: pointer;" onmouseover="this.style.borderColor='#326295'; this.style.background='#f0f4ff'; this.style.boxShadow='0 2px 8px rgba(50,98,149,0.15)';" onmouseout="if(this.dataset.correct === 'false' && !this.dataset.clicked) { this.style.borderColor='#d1d5db'; this.style.background='#f9fafb'; this.style.boxShadow='none'; }" onclick="showBookmarkCorrectAnswer('${item.qIdx}', ${i}, this, ${qData.a})">
-                    <strong style="color: #326295; font-size: 1.1rem;">(${String.fromCharCode(65 + i)})</strong> ${opt}
-                  </div>
-                `).join('')}
+                ${opts.map((opt, i) => {
+            let optionContent = `<strong style="color: #326295; font-size: 1.1rem; font-weight: 700;">(${String.fromCharCode(65 + i)})</strong> ${opt}`;
+
+            // विकल्प की image के साथ HTML बनाएं
+            if (qData.oImg && qData.oImg[i]) {
+              optionContent += `<div style="margin-top: 12px; display: flex; justify-content: center; align-items: center; padding: 8px; background: transparent; border-radius: 8px;">
+                      <img src="${qData.oImg[i]}" alt="Option ${String.fromCharCode(65 + i)} image" style="max-width: 100%; max-height: 70px; object-fit: contain; border-radius: 6px;">
+                    </div>`;
+            }
+
+            return `
+                    <div class="bm-opt-${item.qIdx}-${i}" data-correct="${i === qData.a}" style="padding: 12px 14px; border-radius: 10px; border: 2px solid #d1d5db; background: #f9fafb; color: #374151; font-weight: 500; font-size: 0.9rem; text-align: left; line-height: 1.7; word-wrap: break-word; transition: all 0.2s ease; cursor: pointer;" onmouseover="this.style.borderColor='#326295'; this.style.background='#f0f4ff'; this.style.boxShadow='0 2px 8px rgba(50,98,149,0.15)';" onmouseout="if(this.dataset.correct === 'false' && !this.dataset.clicked) { this.style.borderColor='#d1d5db'; this.style.background='#f9fafb'; this.style.boxShadow='none'; }" onclick="showBookmarkCorrectAnswer('${item.qIdx}', ${i}, this, ${qData.a})">
+                      ${optionContent}
+                    </div>
+                  `;
+          }).join('')}
               </div>
               <div style="margin-top: 14px; display: flex; gap: 8px; justify-content: flex-end;">
                 <button class="btn btn-submit" style="font-size: 0.75rem; border-radius: 6px; padding: 8px 12px; background: #ef4444; color: white; border: none; font-weight: 600; cursor: pointer;" onclick="removeUnifiedBookmark('${item.testId}', ${item.qIdx})">REMOVE</button>
@@ -3533,6 +3741,46 @@
           const maxOptLength = Math.max(...opts.map(o => o.length));
           const gridCols = maxOptLength > 25 ? 'repeat(4, 1fr)' : 'repeat(2, 1fr)';
 
+          // Image HTML generate करो (अगर image है तो)
+          let imageHTML = '';
+          if (qData.img) {
+            const imgSize = qData.imgSize ? `img-size-${qData.imgSize}` : 'img-size-large';
+            imageHTML += `
+              <div style="margin-bottom: 16px; text-align: center;">
+                <div class="img-wrapper ${imgSize}">
+                  <img src="${qData.img}" style="max-width: 100%; height: auto; border-radius: 8px; display: block;">
+                </div>
+              </div>
+            `;
+          }
+
+          // Multiple images (विकल्पों के साथ) add करो
+          if (qData.imgs && Array.isArray(qData.imgs) && qData.imgs.length > 0) {
+            const imgSize = qData.imgSize ? `img-size-${qData.imgSize}` : 'img-size-large';
+            const gridCols_imgs = qData.imgs.length > 2 ? `repeat(${qData.imgs.length}, 1fr)` : `repeat(2, 1fr)`;
+            imageHTML += `
+              <div style="margin: 15px 0;">
+                <div style="display: grid; grid-template-columns: ${gridCols_imgs}; gap: 15px;">
+            `;
+            qData.imgs.forEach((img, imgIdx) => {
+              const label = qData.imgLabels ? qData.imgLabels[imgIdx] : (imgIdx + 1);
+              imageHTML += `
+                <div style="text-align: center;">
+                  <div class="img-wrapper ${imgSize}" style="margin-bottom: 10px;">
+                    <img src="${img}" alt="Image ${label}" style="max-width: 100%; height: auto; object-fit: contain; border-radius: 8px; display: block;">
+                  </div>
+                  <div style="font-weight: 700; font-size: 0.9rem; color: #326295;">
+                    ${label}
+                  </div>
+                </div>
+              `;
+            });
+            imageHTML += `
+                </div>
+              </div>
+            `;
+          }
+
           const card = document.createElement('div');
           card.className = "bookmark-card";
           card.style.background = "white";
@@ -3552,12 +3800,24 @@
               <div style="margin-bottom: 16px; color: #1f2937; font-weight: 600; font-size: 0.95rem;">
                 "${qData.q}"
               </div>
+              ${imageHTML}
               <div style="display: grid; grid-template-columns: ${gridCols}; gap: 10px; margin-bottom: 12px;" class="bookmark-options-grid-sel-${item.qIdx}">
-                ${opts.map((opt, i) => `
-                  <div class="bm-opt-sel-${item.qIdx}-${i}" data-correct="${i === qData.a}" style="padding: 12px 14px; border-radius: 10px; border: 2px solid #d1d5db; background: #f9fafb; color: #374151; font-weight: 600; font-size: 0.9rem; text-align: left; line-height: 1.5; word-wrap: break-word; transition: all 0.2s ease; cursor: pointer;" onmouseover="this.style.borderColor='#326295'; this.style.background='#f0f4ff'; this.style.boxShadow='0 2px 8px rgba(50,98,149,0.15)';" onmouseout="if(this.dataset.correct === 'false' && !this.dataset.clicked) { this.style.borderColor='#d1d5db'; this.style.background='#f9fafb'; this.style.boxShadow='none'; }" onclick="showBookmarkCorrectAnswer('${item.qIdx}', ${i}, this, ${qData.a})">
-                    <strong style="color: #326295; font-size: 1.1rem;">(${String.fromCharCode(65 + i)})</strong> ${opt}
-                  </div>
-                `).join('')}
+                ${opts.map((opt, i) => {
+            let optionContent = `<strong style="color: #326295; font-size: 1.1rem; font-weight: 700;">(${String.fromCharCode(65 + i)})</strong> ${opt}`;
+
+            // विकल्प की image के साथ HTML बनाएं
+            if (qData.oImg && qData.oImg[i]) {
+              optionContent += `<div style="margin-top: 12px; display: flex; justify-content: center; align-items: center; padding: 8px; background: transparent; border-radius: 8px;">
+                      <img src="${qData.oImg[i]}" alt="Option ${String.fromCharCode(65 + i)} image" style="max-width: 100%; max-height: 70px; object-fit: contain; border-radius: 6px;">
+                    </div>`;
+            }
+
+            return `
+                    <div class="bm-opt-sel-${item.qIdx}-${i}" data-correct="${i === qData.a}" style="padding: 12px 14px; border-radius: 10px; border: 2px solid #d1d5db; background: #f9fafb; color: #374151; font-weight: 500; font-size: 0.9rem; text-align: left; line-height: 1.7; word-wrap: break-word; transition: all 0.2s ease; cursor: pointer;" onmouseover="this.style.borderColor='#326295'; this.style.background='#f0f4ff'; this.style.boxShadow='0 2px 8px rgba(50,98,149,0.15)';" onmouseout="if(this.dataset.correct === 'false' && !this.dataset.clicked) { this.style.borderColor='#d1d5db'; this.style.background='#f9fafb'; this.style.boxShadow='none'; }" onclick="showBookmarkCorrectAnswer('${item.qIdx}', ${i}, this, ${qData.a})">
+                      ${optionContent}
+                    </div>
+                  `;
+          }).join('')}
               </div>
               <div style="margin-top: 14px; display: flex; gap: 8px; justify-content: flex-end;">
                 <button class="btn btn-submit" style="font-size: 0.75rem; border-radius: 6px; padding: 8px 12px; background: #ef4444; color: white; border: none; font-weight: 600; cursor: pointer;" onclick="removeUnifiedBookmark('${item.testId}', ${item.qIdx})">REMOVE</button>
@@ -3608,11 +3868,13 @@
     function updateActiveTab(idx) {
       subjectsInfo.forEach((sub, i) => {
         const tab = document.getElementById(`tab-${i}`);
-        if (idx >= sub.start && idx <= sub.end) {
-          tab.classList.add('active');
-          tab.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-        } else {
-          tab.classList.remove('active');
+        if (tab) {  // ✅ NULL CHECK जोड़ा
+          if (idx >= sub.start && idx <= sub.end) {
+            tab.classList.add('active');
+            tab.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+          } else {
+            tab.classList.remove('active');
+          }
         }
       });
     }
@@ -3781,26 +4043,67 @@
         statusEl.innerHTML = "";
       }
 
-      // Display question with optional image
+      // Display question with optional image(s)
       let qContent = `${d.q}`;
       let imageHTML = '';
 
+      // मुख्य इमेज के लिए (बिना लेबल वाली) - इसे यहाँ जोड़ें
       if (d.img) {
-        // Image properties से class names बनाएं
         const imgSize = d.imgSize ? `img-size-${d.imgSize}` : 'img-size-large';
-        const imgPosition = d.imgPosition ? `img-position-${d.imgPosition}` : 'img-position-bottom';
-
-        imageHTML = `
-          <div class="question-with-image ${imgPosition}">
+        imageHTML += `
+          <div style="margin-bottom: 20px; text-align: center;">
             <div class="img-wrapper ${imgSize}">
-              <img src="${d.img}" alt="Question Image">
-            </div>
-            <div class="question-text" style="margin-bottom: 15px;">
-              ${d.q}
+              <img src="${d.img}" style="max-width: 100%; height: auto; border-radius: 8px;">
             </div>
           </div>
         `;
-        qContent = imageHTML;
+      }
+
+      // Multiple images के लिए (नई functionality)
+      if (d.imgs && Array.isArray(d.imgs) && d.imgs.length > 0) {
+        const imgSize = d.imgSize ? `img-size-${d.imgSize}` : 'img-size-large';
+        const gridCols = d.imgs.length > 2 ? `repeat(${d.imgs.length}, 1fr)` : `repeat(2, 1fr)`;
+
+        imageHTML += `
+          <div style="margin: 15px 0;">
+            <div style="display: grid; grid-template-columns: ${gridCols}; gap: 15px;">
+        `;
+
+        d.imgs.forEach((img, imgIdx) => {
+          const label = d.imgLabels ? d.imgLabels[imgIdx] : (imgIdx + 1);
+          imageHTML += `
+              <div style="text-align: center;">
+                <div class="img-wrapper ${imgSize}" style="margin-bottom: 10px;">
+                  <img src="${img}" alt="Image ${label}" style="max-width: 100%; height: auto; object-fit: contain; border-radius: 8px;">
+                </div>
+                <div style="font-weight: 700; font-size: 1.1rem; color: #326295;">
+                  ${label}
+                </div>
+              </div>
+          `;
+        });
+
+        imageHTML += `
+            </div>
+          </div>
+        `;
+      }
+
+      // अगर imageHTML है तो उसे qContent में set करें
+      if (imageHTML) {
+        // Image position को check करें
+        const imgPosition = d.imgPosition ? d.imgPosition : 'bottom';
+        const styledQuestion = `<div style="background: #f0f4ff; padding: 14px; border-radius: 8px; border-left: 4px solid #326295; color: #1f2937; line-height: 1.8; margin-bottom: 15px;">${d.q}</div>`;
+        if (imgPosition === 'top') {
+          // Image को top पर रखें (image पहले, फिर question)
+          qContent = imageHTML + styledQuestion;
+        } else {
+          // Image को bottom पर रखें (question पहले, फिर image)
+          qContent = styledQuestion + imageHTML;
+        }
+      } else {
+        // अगर कोई image नहीं है तो भी styled question दिखाएं
+        qContent = `<div style="background: #f0f4ff; padding: 14px; border-radius: 8px; border-left: 4px solid #326295; color: #1f2937; line-height: 1.8;">${d.q}</div>`;
       }
       qTextEl.innerHTML = qContent;
 
@@ -3811,11 +4114,25 @@
       d.o.forEach((opt, i) => {
         const li = document.createElement('li');
         li.style.fontSize = `${currentScale * 0.9}rem`;
+        li.style.fontWeight = '500';
+        li.style.lineHeight = '1.7';
+        li.style.color = '#374151';
         if (isFinished) {
           if (i === d.a) li.classList.add('correct-ans');
           else if (answers[idx] === i && i !== d.a) li.classList.add('wrong-ans');
         }
-        li.innerHTML = `<input type=\"radio\" name=\"opt\" ${answers[idx] === i ? 'checked' : ''} ${isFinished ? 'disabled' : ''}> <span class=\"opt-label\">${labels[i]}</span> ${opt}`;
+
+        // विकल्प की image के साथ HTML बनाएं
+        let optionHTML = `<input type=\"radio\" name=\"opt\" ${answers[idx] === i ? 'checked' : ''} ${isFinished ? 'disabled' : ''}> <span class=\"opt-label\">${labels[i]}</span> ${opt}`;
+
+        // अगर विकल्प के लिए image है तो उसे add करें
+        if (d.oImg && d.oImg[i]) {
+          optionHTML += `<div style="margin-top: 12px; display: flex; justify-content: center; align-items: center; padding: 8px; background: transparent; border-radius: 8px;">
+            <img src="${d.oImg[i]}" alt="Option ${labels[i]} image" style="max-width: 100%; max-height: 200px; object-fit: contain; border-radius: 6px;">
+          </div>`;
+        }
+
+        li.innerHTML = optionHTML;
         if (!isFinished) {
           li.onclick = () => {
             if (isFinished) return;
@@ -4175,66 +4492,87 @@
     }
 
     window.openTestsDashboard = function (push = true) {
-      // पहले परीक्षा सूची लोड करें
-      loadAndDisplayTestList();
+      console.log('🎯 openTestsDashboard called');
+      // tests-dashboard-screen को populate करें
+      loadAndDisplayTests();
       // फिर स्क्रीन स्विच करें
-      if (push) handleScreenTransition('test-list');
+      if (push) {
+        window.history.pushState({ screen: 'tests' }, "");
+      }
+      switchScreen('tests-dashboard-screen');
+      console.log('✅ Tests dashboard displayed');
     };
 
     // 🆕 परीक्षाओं को लोड और डिस्प्ले करने का फंक्शन
     function loadAndDisplayTests() {
-      const container = document.getElementById('tests-list-container');
-      container.innerHTML = '';
+      try {
+        console.log('📋 loadAndDisplayTests called');
+        const container = document.getElementById('tests-list-container');
+        if (!container) {
+          console.error('❌ tests-list-container not found');
+          return;
+        }
+        container.innerHTML = '';
 
-      // TESTS ऑब्जेक्ट से सभी उपलब्ध परीक्षाएं प्राप्त करें
-      let tests = [];
+        // TESTS ऑब्जेक्ट से सभी उपलब्ध परीक्षाएं प्राप्त करें
+        let tests = [];
 
-      // अगर getAllTests() फंक्शन उपलब्ध है तो उसे उपयोग करें
-      if (typeof getAllTests === 'function') {
-        tests = getAllTests();
-      } else {
-        // फॉलबैक: सीधे TESTS ऑब्जेक्ट से परीक्षाएं
-        tests = Object.keys(TESTS).map(key => ({
-          id: TESTS[key].id,
-          name: TESTS[key].name,
-          description: TESTS[key].description,
-          emoji: TESTS[key].emoji,
-          questions: TESTS[key].questions.length,
-          duration: TESTS[key].config.TIME_LIMIT_MINUTES,
-          sections: TESTS[key].config.SECTIONS?.length || 0,
-          category: 'सामान्य अध्ययन'
+        // अगर getAllTests() फंक्शन उपलब्ध है तो उसे उपयोग करें
+        if (typeof getAllTests === 'function') {
+          console.log('✅ Using getAllTests function');
+          tests = getAllTests();
+          console.log('📊 Tests from getAllTests:', tests.length);
+        } else if (typeof TESTS !== 'undefined' && TESTS) {
+          // फॉलबैक: सीधे TESTS ऑब्जेक्ट से परीक्षाएं
+          console.log('⚠️ Using TESTS object directly');
+          tests = Object.keys(TESTS).map(key => ({
+            id: TESTS[key].id,
+            name: TESTS[key].name,
+            description: TESTS[key].description,
+            emoji: TESTS[key].emoji,
+            questions: TESTS[key].questions.length,
+            duration: TESTS[key].config.TIME_LIMIT_MINUTES,
+            sections: TESTS[key].config.SECTIONS?.length || 0,
+            category: 'सामान्य अध्ययन'
+          }));
+          console.log('📊 Tests from TESTS object:', tests.length);
+        } else {
+          console.error('❌ Neither getAllTests nor TESTS available');
+          tests = [];
+        }
+
+        // सभी tests में sections को validate करें
+        tests = tests.map(test => ({
+          ...test,
+          sections: test.sections || 0,
+          questions: test.questions || 0,
+          duration: test.duration || 0
         }));
-      }
 
-      // सभी tests में sections को validate करें
-      tests = tests.map(test => ({
-        ...test,
-        sections: test.sections || 0,
-        questions: test.questions || 0,
-        duration: test.duration || 0
-      }));
+        console.log('📍 Final tests array:', tests);
 
-      if (tests.length === 0) {
-        container.innerHTML = `
-          <div style="text-align:center; padding:60px 20px;">
-            <div style="font-size: 4.5rem; margin-bottom: 15px;">🔍</div>
-            <h3 style="color: #555; font-size: 1.1rem; margin-bottom: 8px;">कोई परीक्षा नहीं मिली</h3>
-            <p style="color: #999; font-size: 0.85rem;">शीघ्र ही नई परीक्षाएं जोड़ी जाएंगी।</p>
-          </div>`;
-        return;
-      }
+        if (tests.length === 0) {
+          console.warn('⚠️ No tests to display');
+          container.innerHTML = `
+            <div style="text-align:center; padding:60px 20px;">
+              <div style="font-size: 4.5rem; margin-bottom: 15px;">🔍</div>
+              <h3 style="color: #555; font-size: 1.1rem; margin-bottom: 8px;">कोई परीक्षा नहीं मिली</h3>
+              <p style="color: #999; font-size: 0.85rem;">शीघ्र ही नई परीक्षाएं जोड़ी जाएंगी।</p>
+            </div>`;
+          return;
+        }
 
-      tests.forEach(test => {
-        const testCard = document.createElement('div');
-        testCard.className = 'test-card';
-        const attemptCount = getAttemptCount(test.id);
-        const isScheduled = isTestScheduled(test.id);
-        const scheduledText = getScheduledTimeText(test.id);
+        tests.forEach((test, idx) => {
+          console.log(`🎯 Rendering test ${idx + 1}:`, test.name);
+          const testCard = document.createElement('div');
+          testCard.className = 'test-card';
+          const attemptCount = getAttemptCount(test.id);
+          const isScheduled = isTestScheduled(test.id);
+          const scheduledText = getScheduledTimeText(test.id);
 
-        testCard.innerHTML = `
+          testCard.innerHTML = `
             <h3 class="test-card-title">${test.emoji || '📚'} ${test.name}</h3>
             ${test.description ? `<p style="font-size: 0.8rem; color: #666; margin-top: 4px;">${test.description}</p>` : ''}
-            </div>
             <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
               <span class="test-card-badge">
                 <span>🤔</span> ${test.questions || test.totalQuestions} प्रश्न
@@ -4247,14 +4585,18 @@
           </div>
           <div style="display: flex; gap: 8px;">
             ${isScheduled ?
-            `<div style="flex: 1; padding: 12px; background: #FFF3CD; color: #856404; border-radius: 8px; font-size: 0.8rem; text-align: center; border: 1px solid #FFEAA7; margin-top: auto;">⏰ ${scheduledText}</div>` :
-            `<button class="test-card-button" style="flex: 1; margin-top: auto;" onclick="selectAndStartTest('${test.id}')">${getExamButtonText(test.id)}</button>
+              `<div style="flex: 1; padding: 12px; background: #FFF3CD; color: #856404; border-radius: 8px; font-size: 0.8rem; text-align: center; border: 1px solid #FFEAA7; margin-top: auto;">⏰ ${scheduledText}</div>` :
+              `<button class="test-card-button" style="flex: 1; margin-top: auto;" onclick="selectAndStartTest('${test.id}')">${getExamButtonText(test.id)}</button>
               ${attemptCount > 0 ? `<button class="btn btn-next" style="background: #4CAF50; padding: 10px 16px; border-radius: 10px; font-size: 0.85rem; flex: 1; margin-top: auto; margin-left: 8px;" onclick="viewTestAttempts('${test.id}')">REVIEW</button>` : ''}`
-          }
+            }
           </div>
         `;
-        container.appendChild(testCard);
-      });
+          container.appendChild(testCard);
+        });
+        console.log('✅ All tests rendered successfully. Total:', tests.length);
+      } catch (error) {
+        console.error('❌ loadAndDisplayTests error:', error);
+      }
     }
 
     window.openHistory = (push = true) => {
@@ -4726,9 +5068,9 @@
         let timeStr = timeVal >= 60 ? `${Math.floor(timeVal / 60)}m ${timeVal % 60}s` : `${timeVal}s`;
         let optionsHtml = '';
         q.o.forEach((opt, j) => {
-          let optStyle = "color: inherit;";
-          if (j === q.a) optStyle = "color: #2e7d32; font-weight: bold;";
-          else if (j === userAnsIdx && userAnsIdx !== q.a) optStyle = "color: #c62828; font-weight: bold;";
+          let optStyle = "color: #374151; font-weight: 500; line-height: 1.7;";
+          if (j === q.a) optStyle = "color: #2e7d32; font-weight: 600; line-height: 1.7;";
+          else if (j === userAnsIdx && userAnsIdx !== q.a) optStyle = "color: #c62828; font-weight: 600; line-height: 1.7;";
           optionsHtml += `<div style=\"${optStyle}\">${labels[j]}) ${opt}</div>`;
         });
         html += `<div class=\"ps-question-card\" style=\"margin: 0 10mm 15px;\">
@@ -4750,16 +5092,42 @@
     window.resetTest = () => showModal("सावधान!", "डेटा मिट जाएगा। क्या आप तैयार हैं?", () => { localStorage.removeItem(getStorageKey(rollNumber)); location.reload(); });
 
     window.addEventListener('DOMContentLoaded', () => {
-      window.history.replaceState({ screen: 'login' }, "");
-      const lastUser = JSON.parse(localStorage.getItem(USER_CRED_KEY));
-      if (lastUser) {
-        userName = lastUser.userName || "";
-        rollNumber = lastUser.rollNumber || "";
-        document.getElementById('user-name-input').value = userName;
-        document.getElementById('roll-number-input').value = rollNumber;
+      console.log('🚀 DOMContentLoaded event fired');
+      console.log('📋 Configuration loaded - CONFIG.TEST_NAME:', CONFIG?.TEST_NAME, 'TOTAL_QUESTIONS:', CONFIG?.TOTAL_QUESTIONS);
 
-        const storedBM = JSON.parse(localStorage.getItem(getBookmarkKey(rollNumber)));
-        if (storedBM) bookmarks = storedBM;
+      try {
+        window.history.replaceState({ screen: 'login' }, "");
+        const lastUser = JSON.parse(localStorage.getItem(USER_CRED_KEY));
+
+        if (lastUser && lastUser.userName && lastUser.rollNumber) {
+          console.log('✅ Found saved user credentials:', lastUser);
+          userName = lastUser.userName;
+          rollNumber = lastUser.rollNumber;
+
+          const userNameInput = document.getElementById('user-name-input');
+          const rollNumberInput = document.getElementById('roll-number-input');
+
+          if (userNameInput) userNameInput.value = userName;
+          if (rollNumberInput) rollNumberInput.value = rollNumber;
+
+          // बुकमार्क लोड करना
+          try {
+            const bookmarkKey = getBookmarkKey(rollNumber);
+            const storedBM = JSON.parse(localStorage.getItem(bookmarkKey));
+            if (storedBM && Array.isArray(storedBM)) {
+              bookmarks = storedBM;
+              console.log('✅ Bookmarks auto-loaded:', bookmarks.length);
+            }
+          } catch (e) {
+            console.warn('⚠️ Error auto-loading bookmarks:', e);
+          }
+
+          console.log('💡 Tip: Click LOGIN to proceed, or clear inputs to enter new credentials');
+        } else {
+          console.log('⚠️ No saved credentials found - fresh start');
+        }
+      } catch (error) {
+        console.error('❌ DOMContentLoaded initialization error:', error);
       }
     });
   </script>
