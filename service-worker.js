@@ -142,4 +142,13 @@ self.addEventListener('message', (event) => {
   }
 });
 
+
+self.addEventListener('install', (event) => {
+  self.skipWaiting(); // पुराने वर्ज़न को तुरंत हटा देता है
+});
+
+self.addEventListener('activate', (event) => {
+  event.waitUntil(clients.claim()); // नए वर्ज़न को तुरंत कंट्रोल लेने देता है
+});
+
 console.log('[Service Worker] Loaded and ready - Version 2');
